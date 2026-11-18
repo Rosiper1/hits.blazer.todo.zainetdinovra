@@ -1,0 +1,50 @@
+﻿@page "/admin"
+@rendermode InteractiveServer
+@using TodoServerApp.Models
+@using TodoServerApp.Services
+@inject BookingService BookingService
+
+<h3>Управление бронированиями</h3>
+
+@if (!BookingService.GetReservations().Any())
+{
+    <p>Активных бронирований нет.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Столик</th>
+                <th>Клиент</th>
+                <th>Время</th>
+                <th>Статус</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var res in BookingService.GetReservations().Where(r => r.Status == "Confirmed"))
+            {
+                <tr>
+                    <td>@res.Id</td>
+                    <td>#@res.TableId</td>
+                    <td>@res.Client?.Name (@res.Client?.PhoneNumber)</td>
+                    <td>@res.ReservationTime.ToString("g")</td>
+                    <td><span class="badge bg-success">@res.Status</span></td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Cancel(res.Id)">Снять бронь</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private async Task Cancel(int id)
+    {
+        await BookingService.CancelReservation(id);
+        StateHasChanged(); // Обновляем таблицу
+    }
+}

@@ -1,8 +1,7 @@
-﻿@page "/Account/LoginWith2fa"
+@page "/Account/LoginWith2fa"
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
-@using TodoServerApp.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -28,7 +27,7 @@
                 <ValidationMessage For="() => Input.TwoFactorCode" class="text-danger" />
             </div>
             <div class="checkbox mb-3">
-                <label for="remember-machine" class="form-label">
+                <label class="form-label">
                     <InputCheckbox @bind-Value="Input.RememberMachine" />
                     Remember this machine
                 </label>

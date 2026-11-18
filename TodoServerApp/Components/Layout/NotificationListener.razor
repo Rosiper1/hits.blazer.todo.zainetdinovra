@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavManager
+@implements IAsyncDisposable
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <strong>Уведомление!</strong> @Message
+        <button type="button" class="btn-close" @onclick="() => Message = null"></button>
+    </div>
+}
+
+@code {
+    private HubConnection? _hubConnection;
+    private string? Message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Подключаемся к нашему Hub-у, который мы зарегистрировали в Program.cs
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavManager.ToAbsoluteUri("/notificationHub"))
+            .WithAutomaticReconnect() // Автоматически переподключаться, если связь упадет
+            .Build();
+
+        // Слушаем сообщения от сервера
+        _hubConnection.On<string>("ReceiveNotification", (msg) =>
+        {
+            Message = msg;
+            InvokeAsync(StateHasChanged); // Обновляем интерфейс, чтобы показать сообщение
+        });
+
+        try
+        {
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка подключения к SignalR: {ex.Message}");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+}

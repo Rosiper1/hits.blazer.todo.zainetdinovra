@@ -1,0 +1,85 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using TodoServerApp.Models
+@using TodoServerApp.Services
+@inject BookingService BookingService
+@using System.Globalization
+
+<h3>Выбор столика</h3>
+
+<div class="row">
+    @foreach (var table in BookingService.GetTables())
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card @(table.IsAvailable ? "" : "bg-secondary text-white")">
+                <div class="card-body">
+                    <h5 class="card-title">Столик #@table.Id</h5>
+                    <p class="card-text">Мест: @table.Seats (@table.Location)</p>
+                    @if (table.IsAvailable)
+                    {
+                        <button class="btn btn-primary" @onclick="() => SelectTable(table)">Забронировать</button>
+                    }
+                    else
+                    {
+                        <span>Занят</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (SelectedTable != null)
+{
+    <div class="mt-4 p-3 border rounded">
+        <h4>Бронирование столика #@SelectedTable.Id</h4>
+        <div class="mb-2">
+            <label>Ваше имя:</label>
+            <input class="form-control" @bind="ClientName" />
+        </div>
+        <div class="mb-2">
+            <label>Телефон:</label>
+            <input class="form-control" @bind="ClientPhone" />
+        </div>
+        <div class="mb-2">
+            <label>Время:</label>
+            <input type="datetime-local" class="form-control" @bind="ReservationTime" />
+        </div>
+        <button class="btn btn-success" @onclick="ConfirmBooking">Подтвердить</button>
+    </div>
+}
+
+@code {
+    private Table? SelectedTable;
+    private string ClientName = "";
+    private string ClientPhone = "";
+    private DateTime ReservationTime = DateTime.Now.AddHours(1);
+
+    protected override void OnInitialized()
+    {
+        // Устанавливаем российскую культуру (формат дат, чисел)
+        var culture = new CultureInfo("ru-RU");
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+    }
+
+    private void SelectTable(Table table)
+    {
+        SelectedTable = table;
+    }
+
+    private async Task ConfirmBooking()
+    {
+        if (SelectedTable == null) return;
+        
+        var client = new Client { Name = ClientName, PhoneNumber = ClientPhone };
+        
+        // Ждем завершения бронирования (и отправки уведомления)
+        await BookingService.BookTable(SelectedTable.Id, client, ReservationTime);
+        
+        // Сбрасываем выбранный столик, чтобы форма закрылась
+        SelectedTable = null;
+        
+        StateHasChanged(); 
+    }
+}

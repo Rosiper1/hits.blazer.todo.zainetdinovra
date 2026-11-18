@@ -58,3 +58,117 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+:root {
+    --bs-primary: #C85A17; /* Терракотовый (цвет крыш) */
+    --bs-primary-rgb: 200, 90, 23;
+    --bs-secondary: #E6A817; /* Золотистый / Солнечный */
+    --bs-secondary-rgb: 230, 168, 23;
+    --bs-success: #6B8E23; /* Оливковый */
+    --bs-success-rgb: 107, 142, 35;
+    --bs-danger: #A52A2A; /* Тёмно-красный */
+
+    --bs-body-bg: #FFF8E7; /* Тёплый кремовый фон (как пергамент) */
+    --bs-body-color: #3E2723; /* Тёмно-коричневый текст */
+
+    --bs-border-color: #E0C9A6; /* Цвет границ (как песок) */
+}
+
+/* Стили для боковой панели */
+.sidebar {
+    background-image: linear-gradient(180deg, #5D4037 0%, #3E2723 70%); /* Градиент от коричневого к тёмному */
+}
+
+/* Стили для верхней шапки */
+.top-row {
+    background-color: #FFF8E7 !important; /* Кремовый фон */
+    border-bottom: 1px solid #E0C9A6;
+    color: #3E2723;
+}
+
+/* Ссылки в меню */
+.navbar-brand {
+    color: #E6A817 !important; /* Золотистый цвет для названия */
+    font-family: 'Georgia', serif; /* Красивый шрифт для ресторана */
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.nav-item ::deep .nav-link {
+    color: #F5DEB3 !important; /* Пшеничный цвет текста */
+    transition: all 0.3s ease;
+}
+
+    .nav-item ::deep .nav-link:hover {
+        color: #E6A817 !important; /* Золотистый при наведении */
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+/* Активный пункт меню */
+.nav-item ::deep a.active {
+    background-color: #C85A17; /* Терракотовый фон для активной страницы */
+    color: white !important;
+}
+
+/* Карточки столиков */
+.card {
+    background-color: #FFFCF5; /* Почти белый с желтоватым оттенком */
+    border: 1px solid #E0C9A6; /* Песочная граница */
+    border-radius: 12px; /* Скругленные углы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Легкая тень */
+    transition: transform 0.2s;
+}
+
+    .card:hover {
+        transform: translateY(-5px); /* Карточка приподнимается при наведении */
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+/* Заголовки в карточках */
+.card-title {
+    color: #C85A17; /* Терракотовый цвет */
+    font-family: 'Georgia', serif;
+}
+
+/* Забронированные столики */
+.card.bg-secondary {
+    background-color: #E0E0E0 !important; /* Серый для занятых */
+    opacity: 0.7;
+}
+
+body {
+    font-family: 'Lora', serif; /* Основной текст */
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', serif; /* Шрифт для заголовков */
+    color: #3E2723;
+}
+/* Насыщенно-оранжевая кнопка */
+.btn-primary {
+    background-color: #e97d12 !important; /* Насыщенный оранжевый */
+    border-color: #e97d12 !important;
+    color: #fff !important;
+}
+
+    /* Эффект при наведении мыши (делаем чуть темнее) */
+    .btn-primary:hover {
+        background-color: #E67300 !important;
+        border-color: #E67300 !important;
+    }
+
+    /* Если кнопка нажата */
+    .btn-primary:active, .btn-primary:focus {
+        background-color: #CC6600 !important;
+        border-color: #CC6600 !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 127, 0, 0.5) !important;
+    }
+
+body {
+    background-image: linear-gradient(rgba(255, 248, 231, 0.35), rgba(255, 248, 231, 0.35)), url('/sorento.jpg');
+    background-size: cover; /* Картинка заполняет весь экран */
+    background-attachment: fixed; /* Картинка не скроллится вместе с текстом */
+    background-position: center; /* Центрируем картинку */
+}
+
+ 

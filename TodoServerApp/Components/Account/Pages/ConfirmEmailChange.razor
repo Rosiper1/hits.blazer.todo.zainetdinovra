@@ -1,9 +1,8 @@
-﻿@page "/Account/ConfirmEmailChange"
+@page "/Account/ConfirmEmailChange"
 
 @using System.Text
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-@using TodoServerApp.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
@@ -42,7 +41,7 @@
         var user = await UserManager.FindByIdAsync(UserId);
         if (user is null)
         {
-            message = "Unable to find user with Id '{userId}'";
+            message = $"Error: Unable to find user with Id '{UserId}'";
             return;
         }
 

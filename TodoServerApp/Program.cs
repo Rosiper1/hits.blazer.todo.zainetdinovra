@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using TodoServerApp.Components;
 using TodoServerApp.Components.Account;
 using TodoServerApp.Data;
+using TodoServerApp.Hubs;
+using TodoServerApp.Services;
 
 namespace TodoServerApp
 {
@@ -17,6 +19,8 @@ namespace TodoServerApp
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<BookingService>();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
@@ -57,7 +61,7 @@ namespace TodoServerApp
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.MapHub<NotificationHub>("/notificationHub");
             app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
             app.UseHttpsRedirection();
 

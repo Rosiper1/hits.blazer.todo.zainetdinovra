@@ -1,9 +1,8 @@
-﻿@page "/Account/Login"
+@page "/Account/Login"
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
-@using TodoServerApp.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
@@ -11,62 +10,64 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Log in</PageTitle>
+<PageTitle>Вход</PageTitle>
 
-<h1>Log in</h1>
+<h1>Вход</h1>
 <div class="row">
     <div class="col-lg-6">
         <section>
             <StatusMessage Message="@errorMessage" />
             <EditForm EditContext="editContext" method="post" OnSubmit="LoginUser" FormName="login">
                 <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
+                <h2>Используйте локальную учетную запись для входа.</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
+                    <!-- ИСПРАВЛЕНО: @bind-Value="Input.Email" -->
                     <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username webauthn" aria-required="true" placeholder="name@example.com" />
-                    <label for="Input.Email" class="form-label">Email</label>
+                    <label for="Input.Email" class="form-label">Почтовый адрес</label>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label for="Input.Password" class="form-label">Password</label>
+                    <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="пароль" />
+                    <label for="Input.Password" class="form-label">Пароль</label>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
                 <div class="checkbox mb-3">
                     <label class="form-label">
                         <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Remember me
+                        Запомнить меня
                     </label>
                 </div>
                 <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Войти</button>
                 </div>
-                <hr />
-                <div class="d-flex flex-column">
-                    <span class="text-secondary mx-auto mt-2">OR</span>
-                    <PasskeySubmit Operation="PasskeyOperation.Request" Name="Input.Passkey" EmailName="Input.Email" class="btn btn-link mx-auto">Log in with a passkey</PasskeySubmit>
-                </div>
-                <hr />
-                <div>
-                    <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
-                </div>
-            </EditForm>
-        </section>
+               <hr />
+<div class="d-flex flex-column mb-4">
+    <!-- Убрали надпись "ИЛИ", оставили только кнопку для ключа, сделав её менее заметной -->
+    <PasskeySubmit Operation="PasskeyOperation.Request" Name="Input.Passkey" EmailName="Input.Email" class="btn btn-outline-secondary btn-sm mx-auto mt-2">
+        <i class="bi bi-key"></i> Войти с помощью ключа доступа
+    </PasskeySubmit>
+</div>
+
+<div class="d-flex flex-column gap-2 text-center mt-3">
+    <!-- Ссылка на восстановление пароля -->
+    <div>
+        <a href="Account/ForgotPassword" class="text-decoration-none text-muted small">Забыли пароль?</a>
     </div>
-    <div class="col-lg-4 col-lg-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
+    
+    <!-- Основная ссылка на регистрацию, выделенная цветом -->
+    <div class="mt-2">
+        <span class="text-muted">Нет аккаунта?</span>
+        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))" class="text-decoration-none fw-bold">Зарегистрироваться</a>
+    </div>
+    
+    <!-- Ссылка на повторную отправку письма, сделанная маленькой и серой -->
+    <div>
+        <a href="Account/ResendEmailConfirmation" class="text-decoration-none text-muted small">Отправить письмо с подтверждением повторно</a>
+    </div>
+</div>
+            </EditForm>
         </section>
     </div>
 </div>
@@ -101,26 +102,22 @@
     {
         if (!string.IsNullOrEmpty(Input.Passkey?.Error))
         {
-            errorMessage = $"Error: {Input.Passkey.Error}";
+            errorMessage = $"Ошибка: {Input.Passkey.Error}";
             return;
         }
 
         SignInResult result;
         if (!string.IsNullOrEmpty(Input.Passkey?.CredentialJson))
         {
-            // When performing passkey sign-in, don't perform form validation.
             result = await SignInManager.PasskeySignInAsync(Input.Passkey.CredentialJson);
         }
         else
         {
-            // If doing a password sign-in, validate the form.
             if (!editContext.Validate())
             {
                 return;
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
             result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         }
 
@@ -142,21 +139,21 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            errorMessage = "Ошибка: Неверная попытка входа.";
         }
     }
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Введите адрес электронной почты")]
+        [EmailAddress(ErrorMessage = "Некорректный адрес электронной почты")]
         public string Email { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = "Введите пароль")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Запомнить меня?")]
         public bool RememberMe { get; set; }
 
         public PasskeyInputModel? Passkey { get; set; }

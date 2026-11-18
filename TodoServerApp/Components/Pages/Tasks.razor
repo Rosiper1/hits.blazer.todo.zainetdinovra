@@ -1,0 +1,14 @@
+﻿
+
+<PageTitle>Задачи</PageTitle>
+
+<h1>Система бронирования</h1>
+
+@foreach(var task in tasks)
+{
+	<p>@task</p>
+}
+
+@code {
+	string[] tasks = ["Задача 1", "Задача 2"];
+}
